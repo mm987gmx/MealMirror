@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(10x --version)"
+    ]
+  }
+}
