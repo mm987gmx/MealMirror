@@ -6,7 +6,7 @@ A modern, opinionated starter template for building fast, accessible web applica
 
 ## Tech Stack
 
-- [Astro](https://astro.build/) v6 - Modern web framework with server-first rendering
+- [Astro](https://astro.build/) v7 - Modern web framework with server-first rendering
 - [React](https://react.dev/) v19 - UI library for interactive components
 - [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
 - [Tailwind CSS](https://tailwindcss.com/) v4 - Utility-first CSS framework
