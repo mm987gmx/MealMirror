@@ -6,6 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "deploy": "wrangler deploy",
     "astro": "astro",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -53,9 +54,6 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.59.2",
     "wrangler": "^4.90.0"
-  },
-  "overrides": {
-    "vite": "^7.3.2"
   },
   "lint-staged": {
     "*.{ts,tsx,astro}": [
