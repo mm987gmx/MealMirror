@@ -11,6 +11,16 @@ version_id: 345cc4ab-6beb-4b57-918e-b4cc289be7a7
 
 Audit trail of the first real Cloudflare Workers deployment for MealMirror, executed via Plan Mode per the `CLAUDE.md` Lesson 5 chain. Platform decision and full risk register live in `context/foundation/infrastructure.md` — this file records what was actually done and what state production is in now.
 
+## Prerequisites (account/environment setup, done before or during this session)
+
+These are one-time, account-level gates that have to exist before any `wrangler deploy` can succeed. They aren't code changes, so they don't show up in `git log`, but a future re-deploy (new machine, new account, teammate) needs to redo them:
+
+1. **Cloudflare account** — exists, owned by `monika.mazza@gmx.de`.
+2. **Wrangler authenticated locally** — done via `wrangler login` (interactive OAuth). Confirmed with `npx wrangler whoami`: logged in as `monika.mazza@gmx.de`, account ID `ba9765c0aefd05f5174f46463b54d489`, full-account OAuth token (not a scoped API token — see "Known gaps" below).
+3. **`workers.dev` subdomain registered** — one-time, per-account, human-only choice (you pick the subdomain name in the dashboard; can't be scripted non-interactively). Registered as `monika-mazza` via `https://dash.cloudflare.com/<account-id>/workers/onboarding`. Without this, `wrangler deploy` fails at the final publish step even after a fully successful build/upload — this is what caused the mid-deploy failure recorded below; it belongs conceptually at the start of any *first* deploy on a fresh account.
+4. **Supabase project already provisioned** — `SUPABASE_URL` / `SUPABASE_KEY` values available from the Supabase project dashboard (Settings → API) before secrets can be set in step 3 of "Steps executed".
+5. **Local dev environment** — Node.js v22.14.0 (per `.nvmrc`), `npm install` run, `wrangler` available via `npx` (from `devDependencies`, no separate global install needed for deploy; a separate global `gh` CLI install was done for unrelated GitHub tooling and isn't required for the Cloudflare deploy itself).
+
 ## Pre-deploy changes
 
 1. **`wrangler.jsonc`**: renamed Worker from the starter template's `10x-astro-starter` to `meal-mirror`.
