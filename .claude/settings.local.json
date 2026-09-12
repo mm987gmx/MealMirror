@@ -4,7 +4,9 @@
       "Bash(10x --version)",
       "Bash(node -e \"console.log\\(require\\('/Users/mm987/VSCode/MealMirror/node_modules/astro/package.json'\\).version\\)\")",
       "Bash(awk -F: '$2 !~ /^[[:space:]]*$/')",
-      "Bash(npx eslint *)"
+      "Bash(npx eslint *)",
+      "Bash(gh auth *)",
+      "Bash(gh issue *)"
     ]
   }
 }
