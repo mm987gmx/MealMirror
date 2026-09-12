@@ -263,13 +263,13 @@ No schema changes in this slice — F-01's schema already supports every query a
 
 #### Automated
 
-- [x] 3.1 `npm run lint` passes
-- [x] 3.2 `npm run build` succeeds
+- [x] 3.1 `npm run lint` passes — e38b6c1
+- [x] 3.2 `npm run build` succeeds — e38b6c1
 
 #### Manual
 
-- [x] 3.3 Meal logging via dashboard form works end-to-end
-- [x] 3.4 Back-dated check-in appears in the queue and completes correctly
-- [x] 3.5 Collision card appears on second meal and blocks the rest of the dashboard
-- [x] 3.6 "Defer" branch verified in Studio (`superseded_by` set correctly)
-- [x] 3.7 "Keep" branch verified in Studio (no new check-in row created)
+- [x] 3.3 Meal logging via dashboard form works end-to-end — e38b6c1
+- [x] 3.4 Back-dated check-in appears in the queue and completes correctly — e38b6c1
+- [x] 3.5 Collision card appears on second meal and blocks the rest of the dashboard — e38b6c1
+- [x] 3.6 "Defer" branch verified in Studio (`superseded_by` set correctly) — e38b6c1
+- [x] 3.7 "Keep" branch verified in Studio (no new check-in row created) — e38b6c1

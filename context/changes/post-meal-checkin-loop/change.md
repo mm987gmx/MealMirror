@@ -1,7 +1,7 @@
 ---
 change_id: post-meal-checkin-loop
 title: Post meal checkin loop
-status: implementing
+status: implemented
 created: 2026-09-12
 updated: 2026-09-12
 archived_at: null
