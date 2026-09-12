@@ -182,6 +182,11 @@ None — this is a schema-only foundation with no query patterns yet; indexing b
 
 This is the first migration in the project — no existing data to migrate or backfill. If this migration needs reverting after being applied, write a follow-up migration dropping both tables — safe at this stage since no user data exists yet.
 
+## Addenda
+
+- **ESLint override for generated types (post-implementation, unplanned)**: Phase 2's `src/database.types.ts` trips `@typescript-eslint/no-redundant-type-constituents` on its boilerplate `Enums`/`CompositeTypes` helper generics, which resolve to `never` when the schema has no enums or composite types. `eslint.config.js` gained a `generatedTypesConfig` block scoped to `files: ["src/database.types.ts"]` disabling only that rule for that one file — the rule stays fully active everywhere else. Flagged by impl-review (F2, OBSERVATION); recorded here rather than in Phase 2's read-only "Changes Required" section.
+- **RLS fix (post-implementation)**: Impl-review (F1, WARNING) found `check_ins_insert_own`/`check_ins_update_own` didn't validate `meal_id` ownership. Fixed via follow-up migration `20260912170136_check_ins_meal_ownership.sql` — see `reviews/impl-review.md`.
+
 ## References
 
 - Roadmap item: `context/foundation/roadmap.md` — F-01 (`meal-checkin-data-schema`)

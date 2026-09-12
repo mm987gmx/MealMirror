@@ -38,7 +38,7 @@
 - **Location**: eslint.config.js (new `generatedTypesConfig` block)
 - **Detail**: Not mentioned in the plan. Adds an override disabling `@typescript-eslint/no-redundant-type-constituents`, scoped via `files: ["src/database.types.ts"]` to that one generated file only, because the CLI's boilerplate `Enums`/`CompositeTypes` helper generics resolve to `Record<never, never>` on a schema with no enums/composite types and trip that rule. `baseConfig` (where the rule is inherited from `tseslint.configs.strictTypeChecked`) is untouched, so the rule stays fully active everywhere else. Correctly scoped, no drift risk — but the plan should ideally have flagged this as a known consequence of "generated, never hand-edited" types files.
 - **Fix**: None required — document in the plan as an addendum for future reference.
-- **Decision**: PENDING
+- **Decision**: FIXED — addendum added to plan.md under `## Addenda`.
 
 ### F3 — `meal_id` nullable while `kind` is hard-constrained to `'post_meal'`
 
@@ -48,7 +48,7 @@
 - **Location**: supabase/migrations/20260912170135_meal_checkin_schema.sql:67
 - **Detail**: `check_ins.meal_id` is nullable, but `kind` is constrained to the single value `'post_meal'` today. Every check-in in current scope is meal-anchored, so `meal_id` could arguably be `not null` right now. Leaving it nullable is a reasonable bet on S-02 (fixed daily check-ins) needing non-meal-anchored rows, but nothing in the plan or migration comments documents that intent.
 - **Fix**: No change needed now — add a one-line migration comment noting `meal_id` is deliberately nullable in anticipation of S-02's non-meal-anchored `kind` values, so a future reader doesn't mistake it for an oversight.
-- **Decision**: PENDING
+- **Decision**: FIXED — `comment on column` added via `supabase/migrations/20260912170137_check_ins_meal_id_comment.sql`.
 
 ### F4 — No indexes on `user_id` / `meal_id` / `due_at`
 
@@ -58,7 +58,7 @@
 - **Location**: supabase/migrations/20260912170135_meal_checkin_schema.sql (table definitions)
 - **Detail**: No explicit indexes on `meals.user_id`, `check_ins.user_id`, `check_ins.meal_id`, or `check_ins.due_at`. RLS predicates and future queries (e.g., "check-ins due now") will filter on these. Low priority for a foundation migration with no data yet — the plan's own Performance Considerations section already defers this to S-01/S-03 by design.
 - **Fix**: None required now — plan already tracks this as deferred; no action needed until S-01 reveals real access patterns.
-- **Decision**: PENDING
+- **Decision**: SKIPPED — plan's own Performance Considerations section already defers this by design.
 
 ## Verification (Step 3)
 
