@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
 import { mealInputSchema } from "@/lib/validation/meal-tracking";
 import { createMealWithCheckIn } from "@/lib/services/meals";
+import { isUniqueViolation } from "@/lib/services/postgres-errors";
 
 export const POST: APIRoute = async (context) => {
   const user = context.locals.user;
@@ -30,7 +31,11 @@ export const POST: APIRoute = async (context) => {
     }
     return context.redirect("/dashboard");
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Failed to log meal";
+    const message = isUniqueViolation(err)
+      ? "Your pending check-in changed while you were logging this meal — please try again."
+      : err instanceof Error
+        ? err.message
+        : "Failed to log meal";
     return context.redirect(`/dashboard?error=${encodeURIComponent(message)}`);
   }
 };

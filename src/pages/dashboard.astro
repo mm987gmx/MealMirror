@@ -25,8 +25,8 @@ let dueCheckIns: CheckIn[] = [];
 if (supabase && user) {
   if (collisionId && collisionMealId) {
     const [{ data: pendingCheckIn }, { data: newMeal }] = await Promise.all([
-      supabase.from("check_ins").select("*, meals(description)").eq("id", collisionId).single(),
-      supabase.from("meals").select("description").eq("id", collisionMealId).single(),
+      supabase.from("check_ins").select("*, meals(description)").eq("id", collisionId).eq("user_id", user.id).single(),
+      supabase.from("meals").select("description").eq("id", collisionMealId).eq("user_id", user.id).single(),
     ]);
     if (pendingCheckIn) {
       collision = {
