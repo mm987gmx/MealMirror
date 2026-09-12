@@ -240,24 +240,24 @@ No schema changes in this slice — F-01's schema already supports every query a
 
 #### Automated
 
-- [x] 1.1 `npm run lint` passes
-- [x] 1.2 `npm run build` succeeds
+- [x] 1.1 `npm run lint` passes — 9212920
+- [x] 1.2 `npm run build` succeeds — 9212920
 
 #### Manual
 
-- [x] 1.3 Service functions verified against local DB: fresh meal schedules a check-in ~90 min out; colliding meal returns existing check-in without creating a new one
+- [x] 1.3 Service functions verified against local DB: fresh meal schedules a check-in ~90 min out; colliding meal returns existing check-in without creating a new one — 9212920
 
 ### Phase 2: API routes + middleware protection
 
 #### Automated
 
-- [ ] 2.1 `npm run lint` passes
-- [ ] 2.2 `npm run build` succeeds
+- [x] 2.1 `npm run lint` passes
+- [x] 2.2 `npm run build` succeeds
 
 #### Manual
 
-- [ ] 2.3 Unauthenticated POST to `/api/meals` redirects to sign-in
-- [ ] 2.4 Authenticated POST to `/api/meals` creates `meals` + `check_ins` rows and redirects to `/dashboard`
+- [x] 2.3 Unauthenticated POST to `/api/meals` redirects to sign-in
+- [x] 2.4 Authenticated POST to `/api/meals` creates `meals` + `check_ins` rows and redirects to `/dashboard`
 
 ### Phase 3: Dashboard UI
 
