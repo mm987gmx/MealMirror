@@ -196,23 +196,23 @@ This is the first migration in the project — no existing data to migrate or ba
 
 #### Automated
 
-- [x] 1.1 `npx supabase start` reports the local stack is running
-- [x] 1.2 `npx supabase db reset` applies the migration with no SQL errors
-- [x] 1.3 Verification query confirms RLS enabled and 4 policies per table
+- [x] 1.1 `npx supabase start` reports the local stack is running — cd523fc
+- [x] 1.2 `npx supabase db reset` applies the migration with no SQL errors — cd523fc
+- [x] 1.3 Verification query confirms RLS enabled and 4 policies per table — cd523fc
 
 #### Manual
 
-- [x] 1.4 Supabase Studio shows both tables with expected columns
-- [x] 1.5 `anon`-role select against either table returns 0 rows
+- [x] 1.4 Supabase Studio shows both tables with expected columns — cd523fc
+- [x] 1.5 `anon`-role select against either table returns 0 rows — cd523fc
 
 ### Phase 2: TypeScript types
 
 #### Automated
 
-- [ ] 2.1 `npx supabase gen types typescript --local --schema public > src/database.types.ts` runs with no errors and produces a non-empty file
-- [ ] 2.2 `npm run lint` passes
-- [ ] 2.3 `npm run build` succeeds
+- [x] 2.1 `npx supabase gen types typescript --local --schema public > src/database.types.ts` runs with no errors and produces a non-empty file
+- [x] 2.2 `npm run lint` passes
+- [x] 2.3 `npm run build` succeeds
 
 #### Manual
 
-- [ ] 2.4 `src/database.types.ts` Row types match the Phase 1 migration column-for-column
+- [x] 2.4 `src/database.types.ts` Row types match the Phase 1 migration column-for-column
