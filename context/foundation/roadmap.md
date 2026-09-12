@@ -42,7 +42,7 @@ People with digestive complaints struggle to connect food to symptoms because jo
 | ID   | Change ID                     | Outcome (user can …)                                              | Prerequisites | PRD refs                    | Status   |
 | ---- | ------------------------------ | ------------------------------------------------------------------ | -------------- | ---------------------------- | -------- |
 | F-01 | meal-checkin-data-schema        | (foundation) meal & check-in tables exist, RLS-scoped to one user  | —              | Access Control, NFR (privacy) | done |
-| S-01 | post-meal-checkin-loop          | log a meal and complete its triggered post-meal check-in           | F-01           | US-01, FR-001, FR-002, FR-003, FR-004 | in-progress |
+| S-01 | post-meal-checkin-loop          | log a meal and complete its triggered post-meal check-in           | F-01           | US-01, FR-001, FR-002, FR-003, FR-004 | done |
 | S-02 | fixed-daily-checkins            | complete fixed morning and evening check-ins                       | F-01           | FR-003, FR-005, FR-006      | proposed |
 | S-03 | symptom-timeline                | view a chronological timeline of meals and check-ins               | S-01           | FR-007                      | proposed |
 | S-04 | quiet-hours-config              | configure quiet hours that suppress post-meal check-ins            | F-01, S-01     | FR-008                      | proposed |
@@ -89,7 +89,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
   - Should meal logging get optional tags/categories to make patterns easier to spot later, or stay free-text as FR-001 states? — Owner: user. Block: no (PRD Open Question 2; free-text proceeds for MVP).
   - The ≥70% completeness goal depends on the user opening the app inside the check-in window — no reminder mechanism exists. — Owner: user. Block: no (PRD Open Question 3; behavioral risk, not a build blocker).
 - **Risk:** This is the core hypothesis validation (do timing-triggered check-ins actually get answered?) — sequenced immediately after the schema so real usage data can start accumulating toward the 2-week ≥70% completeness goal as early as possible.
-- **Status:** in-progress
+- **Status:** done
 
 ### S-02: Complete fixed morning and evening check-ins
 
@@ -177,3 +177,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 ## Done
 
 - **F-01: (foundation) `meals` and `check_ins` tables exist in Supabase, with RLS policies scoped to the single authenticated user, minimally shaped to support FR-001 and FR-004 (no premature columns for later FRs).** — Archived 2026-09-12 → `context/archive/2026-09-12-meal-checkin-data-schema/`. Lesson: —.
+- **S-01: user can submit a meal entry (date, time, free-text description), see it schedule a post-meal check-in due 1.5–3h later in a pending-check-ins queue, and complete that check-in with a binary tick per symptom — including the 90-minute timing rule and the same-window meal-collision defer choice described in the PRD's Business Logic.** — Archived 2026-09-12 → `context/archive/2026-09-12-post-meal-checkin-loop/`. Lesson: —.

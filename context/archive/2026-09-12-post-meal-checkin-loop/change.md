@@ -1,10 +1,10 @@
 ---
 change_id: post-meal-checkin-loop
 title: Post meal checkin loop
-status: impl_reviewed
+status: archived
 created: 2026-09-12
 updated: 2026-09-12
-archived_at: null
+archived_at: 2026-09-12T18:47:21Z
 ---
 
 ## Notes
