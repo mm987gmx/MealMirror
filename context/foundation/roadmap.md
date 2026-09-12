@@ -142,14 +142,14 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ## Backlog Handoff
 
-| Roadmap ID | Change ID              | Suggested issue title                                  | Ready for `/10x-plan` | Notes                          |
-| ---------- | ----------------------- | -------------------------------------------------------- | ---------------------- | ------------------------------- |
-| F-01       | meal-checkin-data-schema | Create meal & check-in schema with per-user RLS          | yes                     | —                                |
-| S-01       | post-meal-checkin-loop  | Log a meal and complete its triggered post-meal check-in | no                      | Waiting on F-01                 |
-| S-02       | fixed-daily-checkins    | Complete fixed morning and evening check-ins             | no                      | Waiting on F-01                 |
-| S-03       | symptom-timeline        | View a chronological symptom timeline                    | no                      | Waiting on S-01                 |
-| S-04       | quiet-hours-config      | Configure quiet hours for post-meal check-ins            | no                      | Waiting on F-01, S-01           |
-| S-05       | export-tracking-data    | Export meals and check-ins as CSV/JSON                   | no                      | Waiting on S-01                 |
+| Roadmap ID | Change ID              | Suggested issue title                                  | Ready for `/10x-plan` | GitHub Issue | Notes                          |
+| ---------- | ----------------------- | -------------------------------------------------------- | ---------------------- | ------------ | ------------------------------- |
+| F-01       | meal-checkin-data-schema | Create meal & check-in schema with per-user RLS          | yes                     | [#1](https://github.com/mm987gmx/MealMirror/issues/1) | —                                |
+| S-01       | post-meal-checkin-loop  | Log a meal and complete its triggered post-meal check-in | no                      | [#2](https://github.com/mm987gmx/MealMirror/issues/2) | Waiting on F-01                 |
+| S-02       | fixed-daily-checkins    | Complete fixed morning and evening check-ins             | no                      | [#3](https://github.com/mm987gmx/MealMirror/issues/3) | Waiting on F-01                 |
+| S-03       | symptom-timeline        | View a chronological symptom timeline                    | no                      | [#4](https://github.com/mm987gmx/MealMirror/issues/4) | Waiting on S-01                 |
+| S-04       | quiet-hours-config      | Configure quiet hours for post-meal check-ins            | no                      | [#5](https://github.com/mm987gmx/MealMirror/issues/5) | Waiting on F-01, S-01           |
+| S-05       | export-tracking-data    | Export meals and check-ins as CSV/JSON                   | no                      | [#6](https://github.com/mm987gmx/MealMirror/issues/6) | Waiting on S-01                 |
 
 ## Open Roadmap Questions
 
