@@ -209,10 +209,10 @@ This is the first migration in the project — no existing data to migrate or ba
 
 #### Automated
 
-- [x] 2.1 `npx supabase gen types typescript --local --schema public > src/database.types.ts` runs with no errors and produces a non-empty file
-- [x] 2.2 `npm run lint` passes
-- [x] 2.3 `npm run build` succeeds
+- [x] 2.1 `npx supabase gen types typescript --local --schema public > src/database.types.ts` runs with no errors and produces a non-empty file — 8c11704
+- [x] 2.2 `npm run lint` passes — 8c11704
+- [x] 2.3 `npm run build` succeeds — 8c11704
 
 #### Manual
 
-- [x] 2.4 `src/database.types.ts` Row types match the Phase 1 migration column-for-column
+- [x] 2.4 `src/database.types.ts` Row types match the Phase 1 migration column-for-column — 8c11704
