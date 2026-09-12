@@ -41,7 +41,7 @@ People with digestive complaints struggle to connect food to symptoms because jo
 
 | ID   | Change ID                     | Outcome (user can …)                                              | Prerequisites | PRD refs                    | Status   |
 | ---- | ------------------------------ | ------------------------------------------------------------------ | -------------- | ---------------------------- | -------- |
-| F-01 | meal-checkin-data-schema        | (foundation) meal & check-in tables exist, RLS-scoped to one user  | —              | Access Control, NFR (privacy) | in-progress |
+| F-01 | meal-checkin-data-schema        | (foundation) meal & check-in tables exist, RLS-scoped to one user  | —              | Access Control, NFR (privacy) | done |
 | S-01 | post-meal-checkin-loop          | log a meal and complete its triggered post-meal check-in           | F-01           | US-01, FR-001, FR-002, FR-003, FR-004 | proposed |
 | S-02 | fixed-daily-checkins            | complete fixed morning and evening check-ins                       | F-01           | FR-003, FR-005, FR-006      | proposed |
 | S-03 | symptom-timeline                | view a chronological timeline of meals and check-ins               | S-01           | FR-007                      | proposed |
@@ -73,7 +73,7 @@ Foundations below assume these are present and do NOT re-scaffold them.
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Every downstream slice depends on getting this shape right first; keep columns to exactly what US-01/FR-004 need today rather than pre-designing for FR-005 through FR-009 — those can extend the schema later without blocking this milestone's start.
-- **Status:** in-progress
+- **Status:** done
 
 ## Slices
 
@@ -176,4 +176,4 @@ Foundations below assume these are present and do NOT re-scaffold them.
 
 ## Done
 
-(empty — nothing archived yet)
+- **F-01: (foundation) `meals` and `check_ins` tables exist in Supabase, with RLS policies scoped to the single authenticated user, minimally shaped to support FR-001 and FR-004 (no premature columns for later FRs).** — Archived 2026-09-12 → `context/archive/2026-09-12-meal-checkin-data-schema/`. Lesson: —.
