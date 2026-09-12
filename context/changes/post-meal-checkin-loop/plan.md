@@ -251,25 +251,25 @@ No schema changes in this slice — F-01's schema already supports every query a
 
 #### Automated
 
-- [x] 2.1 `npm run lint` passes
-- [x] 2.2 `npm run build` succeeds
+- [x] 2.1 `npm run lint` passes — bde19d4
+- [x] 2.2 `npm run build` succeeds — bde19d4
 
 #### Manual
 
-- [x] 2.3 Unauthenticated POST to `/api/meals` redirects to sign-in
-- [x] 2.4 Authenticated POST to `/api/meals` creates `meals` + `check_ins` rows and redirects to `/dashboard`
+- [x] 2.3 Unauthenticated POST to `/api/meals` redirects to sign-in — bde19d4
+- [x] 2.4 Authenticated POST to `/api/meals` creates `meals` + `check_ins` rows and redirects to `/dashboard` — bde19d4
 
 ### Phase 3: Dashboard UI
 
 #### Automated
 
-- [ ] 3.1 `npm run lint` passes
-- [ ] 3.2 `npm run build` succeeds
+- [x] 3.1 `npm run lint` passes
+- [x] 3.2 `npm run build` succeeds
 
 #### Manual
 
-- [ ] 3.3 Meal logging via dashboard form works end-to-end
-- [ ] 3.4 Back-dated check-in appears in the queue and completes correctly
-- [ ] 3.5 Collision card appears on second meal and blocks the rest of the dashboard
-- [ ] 3.6 "Defer" branch verified in Studio (`superseded_by` set correctly)
-- [ ] 3.7 "Keep" branch verified in Studio (no new check-in row created)
+- [x] 3.3 Meal logging via dashboard form works end-to-end
+- [x] 3.4 Back-dated check-in appears in the queue and completes correctly
+- [x] 3.5 Collision card appears on second meal and blocks the rest of the dashboard
+- [x] 3.6 "Defer" branch verified in Studio (`superseded_by` set correctly)
+- [x] 3.7 "Keep" branch verified in Studio (no new check-in row created)

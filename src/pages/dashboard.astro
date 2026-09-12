@@ -1,27 +1,160 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { createClient } from "@/lib/supabase";
+import { listDueCheckIns } from "@/lib/services/check-ins";
+import MealForm from "@/components/meals/MealForm";
+import type { CheckIn } from "@/types";
 
 const { user } = Astro.locals;
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+
+const error = Astro.url.searchParams.get("error");
+const collisionId = Astro.url.searchParams.get("collision");
+const collisionMealId = Astro.url.searchParams.get("meal");
+
+interface CollisionView {
+  pendingCheckInId: string;
+  mealId: string;
+  originalMealDescription: string;
+  newMealDescription: string;
+}
+
+let collision: CollisionView | null = null;
+let dueCheckIns: CheckIn[] = [];
+
+if (supabase && user) {
+  if (collisionId && collisionMealId) {
+    const [{ data: pendingCheckIn }, { data: newMeal }] = await Promise.all([
+      supabase.from("check_ins").select("*, meals(description)").eq("id", collisionId).single(),
+      supabase.from("meals").select("description").eq("id", collisionMealId).single(),
+    ]);
+    if (pendingCheckIn) {
+      collision = {
+        pendingCheckInId: pendingCheckIn.id,
+        mealId: collisionMealId,
+        originalMealDescription: pendingCheckIn.meals?.description ?? "a previous meal",
+        newMealDescription: newMeal?.description ?? "this meal",
+      };
+    }
+  } else {
+    dueCheckIns = await listDueCheckIns(supabase, user.id);
+  }
+}
+
+const SYMPTOMS: { name: string; label: string }[] = [
+  { name: "stomachPain", label: "Stomach pain" },
+  { name: "heartburn", label: "Heartburn" },
+  { name: "bloating", label: "Bloating" },
+  { name: "bowelIssues", label: "Bowel issues" },
+  { name: "generalWellbeing", label: "General wellbeing" },
+  { name: "dryMouth", label: "Dry mouth" },
+];
 ---
 
 <Layout title="Dashboard">
-  <div class="bg-cosmic flex min-h-screen items-center justify-center p-4">
-    <div class="rounded-2xl border border-white/10 bg-white/10 p-8 text-center text-white backdrop-blur-xl">
-      <h1 class="mb-4 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-3xl font-bold text-transparent">
-        Dashboard
-      </h1>
-      <p class="text-blue-100/80">
-        Welcome, <span class="font-semibold text-white">{user?.email}</span>
-      </p>
-      <p class="mt-2 text-sm text-blue-100/50">This page is only for authenticated users.</p>
-      <form method="POST" action="/api/auth/signout" class="mt-6">
-        <button
-          type="submit"
-          class="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm transition-colors hover:bg-white/20"
-        >
-          Sign out
-        </button>
-      </form>
+  <div class="bg-cosmic min-h-screen p-4 text-white">
+    <div class="mx-auto flex max-w-lg flex-col gap-6 py-8">
+      <div class="rounded-2xl border border-white/10 bg-white/10 p-6 text-center backdrop-blur-xl">
+        <h1 class="mb-2 bg-gradient-to-r from-blue-200 to-purple-200 bg-clip-text text-2xl font-bold text-transparent">
+          Dashboard
+        </h1>
+        <p class="text-sm text-blue-100/80">
+          Welcome, <span class="font-semibold text-white">{user?.email}</span>
+        </p>
+        <form method="POST" action="/api/auth/signout" class="mt-4">
+          <button
+            type="submit"
+            class="rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm transition-colors hover:bg-white/20"
+          >
+            Sign out
+          </button>
+        </form>
+      </div>
+
+      {
+        error && (
+          <p class="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-2 text-sm text-red-300">
+            {error}
+          </p>
+        )
+      }
+
+      {
+        collision ? (
+          <div class="rounded-2xl border border-yellow-500/30 bg-yellow-900/20 p-6 backdrop-blur-xl">
+            <h2 class="mb-2 text-lg font-semibold">You already have a pending check-in</h2>
+            <p class="mb-4 text-sm text-blue-100/80">
+              You still haven't completed the check-in from "{collision.originalMealDescription}". What should happen to
+              it now that you've logged "{collision.newMealDescription}"?
+            </p>
+            <div class="flex flex-col gap-3 sm:flex-row">
+              <form method="POST" action="/api/check-ins/collision" class="flex-1">
+                <input type="hidden" name="action" value="keep" />
+                <input type="hidden" name="pendingCheckInId" value={collision.pendingCheckInId} />
+                <input type="hidden" name="mealId" value={collision.mealId} />
+                <button
+                  type="submit"
+                  class="w-full rounded-lg border border-white/20 bg-white/10 px-4 py-2 text-sm transition-colors hover:bg-white/20"
+                >
+                  Keep original check-in
+                </button>
+              </form>
+              <form method="POST" action="/api/check-ins/collision" class="flex-1">
+                <input type="hidden" name="action" value="defer" />
+                <input type="hidden" name="pendingCheckInId" value={collision.pendingCheckInId} />
+                <input type="hidden" name="mealId" value={collision.mealId} />
+                <button
+                  type="submit"
+                  class="w-full rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-500"
+                >
+                  Defer to this meal
+                </button>
+              </form>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div class="rounded-2xl border border-white/10 bg-white/10 p-6 backdrop-blur-xl">
+              <h2 class="mb-4 text-lg font-semibold">Log a meal</h2>
+              <MealForm client:load serverError={error} />
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/10 p-6 backdrop-blur-xl">
+              <h2 class="mb-4 text-lg font-semibold">Pending check-ins</h2>
+              {dueCheckIns.length === 0 ? (
+                <p class="text-sm text-blue-100/60">Nothing due right now.</p>
+              ) : (
+                <div class="flex flex-col gap-4">
+                  {dueCheckIns.map((checkIn) => (
+                    <form
+                      method="POST"
+                      action="/api/check-ins/complete"
+                      class="rounded-lg border border-white/10 bg-white/5 p-4"
+                    >
+                      <input type="hidden" name="checkInId" value={checkIn.id} />
+                      <p class="mb-3 text-sm text-blue-100/60">Due {new Date(checkIn.due_at).toLocaleString()}</p>
+                      <div class="mb-4 grid grid-cols-2 gap-2">
+                        {SYMPTOMS.map((symptom) => (
+                          <label class="flex items-center gap-2 text-sm text-blue-100/90">
+                            <input type="checkbox" name={symptom.name} class="size-4 rounded border-white/30" />
+                            {symptom.label}
+                          </label>
+                        ))}
+                      </div>
+                      <button
+                        type="submit"
+                        class="w-full rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-500"
+                      >
+                        Complete check-in
+                      </button>
+                    </form>
+                  ))}
+                </div>
+              )}
+            </div>
+          </>
+        )
+      }
     </div>
   </div>
 </Layout>
