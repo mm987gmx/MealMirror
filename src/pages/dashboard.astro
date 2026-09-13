@@ -2,13 +2,16 @@
 import Layout from "@/layouts/Layout.astro";
 import { createClient } from "@/lib/supabase";
 import { listDueCheckIns } from "@/lib/services/check-ins";
+import { listMeals } from "@/lib/services/meals";
 import MealForm from "@/components/meals/MealForm";
+import MealList, { type MealListItem } from "@/components/meals/MealList";
 import type { CheckIn } from "@/types";
 
 const { user } = Astro.locals;
 const supabase = createClient(Astro.request.headers, Astro.cookies);
 
 const error = Astro.url.searchParams.get("error");
+const notice = Astro.url.searchParams.get("notice");
 const collisionId = Astro.url.searchParams.get("collision");
 const collisionMealId = Astro.url.searchParams.get("meal");
 
@@ -21,8 +24,16 @@ interface CollisionView {
 
 let collision: CollisionView | null = null;
 let dueCheckIns: CheckIn[] = [];
+let meals: MealListItem[] = [];
 
 if (supabase && user) {
+  meals = (await listMeals(supabase, user.id)).map(({ meal, checkInStatus }) => ({
+    id: meal.id,
+    occurredAt: meal.occurred_at,
+    description: meal.description,
+    checkInStatus,
+  }));
+
   if (collisionId && collisionMealId) {
     const [{ data: pendingCheckIn }, { data: newMeal }] = await Promise.all([
       supabase.from("check_ins").select("*, meals(description)").eq("id", collisionId).eq("user_id", user.id).single(),
@@ -75,6 +86,14 @@ const SYMPTOMS: { name: string; label: string }[] = [
         error && (
           <p class="flex items-center gap-2 rounded-lg border border-red-500/30 bg-red-900/30 px-3 py-2 text-sm text-red-300">
             {error}
+          </p>
+        )
+      }
+
+      {
+        notice && (
+          <p class="flex items-center gap-2 rounded-lg border border-green-500/30 bg-green-900/30 px-3 py-2 text-sm text-green-300">
+            {notice}
           </p>
         )
       }
@@ -151,6 +170,11 @@ const SYMPTOMS: { name: string; label: string }[] = [
                   ))}
                 </div>
               )}
+            </div>
+
+            <div class="rounded-2xl border border-white/10 bg-white/10 p-6 backdrop-blur-xl">
+              <h2 class="mb-4 text-lg font-semibold">Your meals</h2>
+              <MealList client:load meals={meals} />
             </div>
           </>
         )
