@@ -17,7 +17,10 @@ Risk response intent:
 - #2: prove no request race can create two simultaneously active check-ins for one user, and that a constraint violation surfaces as a clear error rather than a silent wrong state.
 After creating the folder, follow the downstream continuation rule.
 
-## Blocked (2026-09-13)
+## Blocked (2026-09-13) — Resolved (2026-09-13)
+
+Fixed by `context/changes/fix-defer-checkin-race` (commits `3479eb9`, `c719bf1`, `2687e38`).
+Phase 3 resumed and `src/lib/services/meals.test.ts` now passes in full.
 
 Phase 3 (collision/defer chain tests) is paused. `src/lib/services/meals.test.ts` (uncommitted,
 written but not landed) revealed that `deferCheckIn` (src/lib/services/check-ins.ts:40-54) is

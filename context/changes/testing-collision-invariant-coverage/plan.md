@@ -361,12 +361,12 @@ No database schema changes. New local-only artifacts: `.env.test` (gitignored), 
 
 #### Automated
 
-- [ ] 3.1 One-meal, two-meal keep, two-meal defer, and three-meal defer-chain cases all pass
-- [ ] 3.2 `npm run typecheck` and `npm run lint` pass
+- [x] 3.1 One-meal, two-meal keep, two-meal defer, and three-meal defer-chain cases all pass
+- [x] 3.2 `npm run typecheck` and `npm run lint` pass
 
 #### Manual
 
-- [ ] 3.3 Spot-check one case's DB rows in Supabase Studio
+- [x] 3.3 Spot-check one case's DB rows in Supabase Studio
 
 ### Phase 4: Risk #2 — Single-Active-Check-In Invariant Coverage
 
