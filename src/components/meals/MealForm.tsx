@@ -3,15 +3,14 @@ import { Clock, UtensilsCrossed, Plus } from "lucide-react";
 import { FormField } from "@/components/auth/FormField";
 import { SubmitButton } from "@/components/auth/SubmitButton";
 import { ServerError } from "@/components/auth/ServerError";
+import { isoToLocalInput, localInputToIso } from "@/lib/datetime";
 
 interface Props {
   serverError?: string | null;
 }
 
 function defaultOccurredAt() {
-  const now = new Date();
-  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-  return now.toISOString().slice(0, 16);
+  return isoToLocalInput(new Date().toISOString());
 }
 
 export default function MealForm({ serverError }: Props) {
@@ -44,7 +43,7 @@ export default function MealForm({ serverError }: Props) {
   return (
     <form method="POST" action="/api/meals" className="space-y-4" onSubmit={handleSubmit} noValidate>
       <FormField
-        id="occurredAt"
+        id="occurredAtLocal"
         type="datetime-local"
         label="When did you eat?"
         value={occurredAt}
@@ -55,6 +54,7 @@ export default function MealForm({ serverError }: Props) {
         error={errors.occurredAt}
         icon={<Clock className="size-4" />}
       />
+      <input type="hidden" name="occurredAt" value={localInputToIso(occurredAt)} />
 
       <FormField
         id="description"
