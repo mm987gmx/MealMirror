@@ -1,7 +1,7 @@
 ---
 change_id: testing-collision-invariant-coverage
 title: Add critical-path tests for meal-collision chain and check-in invariant
-status: implementing
+status: implemented
 created: 2026-09-12
 updated: 2026-09-13
 archived_at: null

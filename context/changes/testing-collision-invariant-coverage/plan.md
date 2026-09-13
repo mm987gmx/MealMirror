@@ -396,8 +396,8 @@ No database schema changes. New local-only artifacts: `.env.test` (gitignored), 
 
 #### Automated
 
-- [x] 6.1 `npm run lint`/`npm run format` pass on updated test-plan.md
+- [x] 6.1 `npm run lint`/`npm run format` pass on updated test-plan.md — 2dc109d
 
 #### Manual
 
-- [x] 6.2 §6.1–§6.3 read back and confirmed accurate
+- [x] 6.2 §6.1–§6.3 read back and confirmed accurate — 2dc109d
