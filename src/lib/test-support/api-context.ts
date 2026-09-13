@@ -15,13 +15,15 @@ interface CapturedCookie {
 }
 
 /**
- * Builds a real, correctly-encoded `Cookie` header for a signed-in user, for use
- * against route handlers that build their Supabase client from request cookies
- * (see src/lib/supabase.ts). Reuses @supabase/ssr's own browser-client cookie
- * serialization (via a fake cookie store) instead of reimplementing its
- * version-specific chunked/base64url encoding by hand.
+ * Signs in as a user and returns the real, correctly-encoded session cookies
+ * @supabase/ssr would set in a browser. Reuses @supabase/ssr's own
+ * browser-client cookie serialization (via a fake cookie store) instead of
+ * reimplementing its version-specific chunked/base64url encoding by hand.
+ * Shared by both the direct-route-handler harness (as a header string, see
+ * buildSessionCookieHeader) and Playwright specs (as cookie objects for
+ * BrowserContext.addCookies).
  */
-export async function buildSessionCookieHeader(email: string, password: string): Promise<string> {
+export async function buildSessionCookies(email: string, password: string): Promise<CapturedCookie[]> {
   const url = requireEnv("SUPABASE_URL");
   const anonKey = requireEnv("SUPABASE_KEY");
   const captured: CapturedCookie[] = [];
@@ -42,11 +44,21 @@ export async function buildSessionCookieHeader(email: string, password: string):
 
   if (captured.length === 0) {
     throw new Error(
-      "Sign-in produced no session cookies — @supabase/ssr's cookie encoding may have changed; re-check buildSessionCookieHeader",
+      "Sign-in produced no session cookies — @supabase/ssr's cookie encoding may have changed; re-check buildSessionCookies",
     );
   }
 
-  return captured.map(({ name, value }) => `${name}=${value}`).join("; ");
+  return captured;
+}
+
+/**
+ * Builds a real, correctly-encoded `Cookie` header for a signed-in user, for use
+ * against route handlers that build their Supabase client from request cookies
+ * (see src/lib/supabase.ts).
+ */
+export async function buildSessionCookieHeader(email: string, password: string): Promise<string> {
+  const cookies = await buildSessionCookies(email, password);
+  return cookies.map(({ name, value }) => `${name}=${value}`).join("; ");
 }
 
 export interface FakeApiContext {

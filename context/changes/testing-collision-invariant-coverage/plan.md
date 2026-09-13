@@ -372,25 +372,25 @@ No database schema changes. New local-only artifacts: `.env.test` (gitignored), 
 
 #### Automated
 
-- [x] 4.1 Concurrent meal-creation race test passes
-- [x] 4.2 Concurrent defer race test passes
-- [x] 4.3 Sequential happy-path regression test passes
-- [x] 4.4 Race tests pass on 3 repeated runs
-- [x] 4.5 `npm run typecheck` and `npm run lint` pass
+- [x] 4.1 Concurrent meal-creation race test passes — ad068c1
+- [x] 4.2 Concurrent defer race test passes — ad068c1
+- [x] 4.3 Sequential happy-path regression test passes — ad068c1
+- [x] 4.4 Race tests pass on 3 repeated runs — ad068c1
+- [x] 4.5 `npm run typecheck` and `npm run lint` pass — ad068c1
 
 #### Manual
 
-- [x] 4.6 Spot-check race-test DB state in Supabase Studio
+- [x] 4.6 Spot-check race-test DB state in Supabase Studio — ad068c1
 
 ### Phase 5: E2E Scoped Check
 
 #### Automated
 
-- [ ] 5.1 `npm run test:e2e` passes
+- [x] 5.1 `npm run test:e2e` passes
 
 #### Manual
 
-- [ ] 5.2 Headed run visually confirms the error banner
+- [x] 5.2 Headed run visually confirms the error banner
 
 ### Phase 6: Cookbook Update
 
