@@ -14,6 +14,16 @@ export const mealInputSchema = z.object({
 
 export type MealInput = z.infer<typeof mealInputSchema>;
 
+export const mealUpdateSchema = mealInputSchema.extend({
+  mealId: z.uuid(),
+});
+
+export type MealUpdateInput = z.infer<typeof mealUpdateSchema>;
+
+export const mealIdSchema = z.object({
+  mealId: z.uuid(),
+});
+
 export const collisionResolutionSchema = z.object({
   action: z.enum(["keep", "defer"]),
   pendingCheckInId: z.uuid(),
