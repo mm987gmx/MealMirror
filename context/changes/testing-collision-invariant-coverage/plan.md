@@ -336,26 +336,26 @@ No database schema changes. New local-only artifacts: `.env.test` (gitignored), 
 
 #### Automated
 
-- [x] 1.1 `npm install` completes with vitest and @playwright/test present
-- [x] 1.2 `npx vitest run` executes and exits 0
-- [x] 1.3 `npm run typecheck` passes
-- [x] 1.4 Env-loading smoke test passes
+- [x] 1.1 `npm install` completes with vitest and @playwright/test present — a4809c3
+- [x] 1.2 `npx vitest run` executes and exits 0 — a4809c3
+- [x] 1.3 `npm run typecheck` passes — a4809c3
+- [x] 1.4 Env-loading smoke test passes — a4809c3
 
 #### Manual
 
-- [x] 1.5 Auto-start works when stopped; doesn't restart when already running
+- [x] 1.5 Auto-start works when stopped; doesn't restart when already running — a4809c3
 
 ### Phase 2: Test Harness Helpers
 
 #### Automated
 
-- [ ] 2.1 `isUniqueViolation` unit test passes
-- [ ] 2.2 Throwaway-user create/delete smoke test passes
-- [ ] 2.3 Cookie/APIContext round-trip smoke test passes
+- [x] 2.1 `isUniqueViolation` unit test passes
+- [x] 2.2 Throwaway-user create/delete smoke test passes
+- [x] 2.3 Cookie/APIContext round-trip smoke test passes
 
 #### Manual
 
-- [ ] 2.4 No throwaway users remain in Supabase Studio after suite run
+- [x] 2.4 No throwaway users remain in Supabase Studio after suite run
 
 ### Phase 3: Risk #1 — Collision/Defer Chain Coverage
 
