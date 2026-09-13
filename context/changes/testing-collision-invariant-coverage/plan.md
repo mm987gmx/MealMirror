@@ -349,13 +349,13 @@ No database schema changes. New local-only artifacts: `.env.test` (gitignored), 
 
 #### Automated
 
-- [x] 2.1 `isUniqueViolation` unit test passes
-- [x] 2.2 Throwaway-user create/delete smoke test passes
-- [x] 2.3 Cookie/APIContext round-trip smoke test passes
+- [x] 2.1 `isUniqueViolation` unit test passes — b332945
+- [x] 2.2 Throwaway-user create/delete smoke test passes — b332945
+- [x] 2.3 Cookie/APIContext round-trip smoke test passes — b332945
 
 #### Manual
 
-- [x] 2.4 No throwaway users remain in Supabase Studio after suite run
+- [x] 2.4 No throwaway users remain in Supabase Studio after suite run — b332945
 
 ### Phase 3: Risk #1 — Collision/Defer Chain Coverage
 
