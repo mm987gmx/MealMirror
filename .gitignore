@@ -26,3 +26,14 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# lessons
+.mylessons/
+
+# test env
+.env.test
+
+# e2e artifacts
+playwright-report/
+test-results/
+blob-report/

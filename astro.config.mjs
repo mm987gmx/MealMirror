@@ -13,7 +13,11 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
-  adapter: cloudflare(),
+  // The Cloudflare adapter's Workers runtime setup errors under Vitest's
+  // plain Node process (Vitest always sets process.env.VITEST). Omitting it
+  // only for the test runner is the documented fallback in
+  // context/changes/testing-collision-invariant-coverage/plan.md.
+  adapter: process.env.VITEST ? undefined : cloudflare(),
   env: {
     schema: {
       SUPABASE_URL: envField.string({ context: "server", access: "secret", optional: true }),
