@@ -35,7 +35,7 @@ Read the plan file fully. Also read the sibling `plan-brief.md` in the same chan
 - **Current State Analysis** — documented constraints and gotchas
 - **Scope boundaries** — "What We're NOT Doing"
 - **Phases** — file paths, changes, dependencies
-- **Decisions** and **assumptions** (explicit and implicit)
+- **Decisions** and **assumptions** (explicit and implicit) — note for yourself any ranking or selection term the plan relies on ("top N", "latest", "active", "duplicate") whose tie case the plan never decides; it feeds Blind Spots below
 - **Progress section** — the canonical `## Progress` block at the bottom of the plan (see `references/progress-format.md`)
 
 Before any code verification, check the plan against itself. These three scans often catch the highest-value issues — problems the plan author discovered but didn't fully follow through on:
@@ -86,7 +86,7 @@ For each phase: "if I removed this, would the end state still be achievable?" Wa
 Does this fit the existing system? New patterns where existing ones would work (pattern proliferation). Clean module boundaries and correct dependency direction. High-blast-radius changes — phases touching many files across modules, changes to shared utilities. Vague "refactor as needed" or "update accordingly" that will spiral.
 
 ### Blind Spots
-What didn't the plan consider? Error paths (only happy path described?), rollback story (phase 3 fails — can we revert?), resource/cost impact (API calls, computational work — what does this cost at expected usage?), default value changes (a default that triples cost or time should be called out), testing gaps, security boundaries.
+What didn't the plan consider? Error paths (only happy path described?), rollback story (phase 3 fails — can we revert?), resource/cost impact (API calls, computational work — what does this cost at expected usage?), default value changes (a default that triples cost or time should be called out), testing gaps, security boundaries. A boundary the plan leaves to the code: a term it uses but never decides at the tie (the Nth vs N+1th on equal values, the unit of a count, the exact instant of a state change) — flag it when the only answer is whatever the implementation does today.
 
 ### Plan Completeness
 Is the document actionable? File paths specific (not "somewhere in src/")? Changes at function/method level? Success criteria with runnable commands? TBDs, TODOs, or placeholder sections?

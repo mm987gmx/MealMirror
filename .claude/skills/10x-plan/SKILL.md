@@ -121,7 +121,7 @@ Before any reading, identify what kinds of upstream artifacts the user passed in
    - Identify any discrepancies or misunderstandings
    - Note assumptions that need verification
    - Determine true scope based on codebase reality
-   - **Run a smallest-counterexample pass before choosing interview questions.** For ordered selections, place equal comparison values across the cutoff; for counted sets, vary the identity/equivalence rule; for state thresholds, vary inclusivity and governing clock. Ask every case that yields different user-visible outcomes in the first round. Existing behaviour supplies one option, not the answer.
+   - **Run a smallest-counterexample pass before choosing interview questions, and keep the result as a working note.** It fires on the ranking, selection and state words the request uses without defining — "top N", "winner", "best", "latest", "first", "duplicate", "active", "until the end". For ordered selections, place equal comparison values across the cutoff; for counted sets, vary the identity/equivalence rule; for state thresholds, vary inclusivity and governing clock. For each case jot one line for yourself — the term, the counterexample, what the user would see differently — *before* looking up what the code does there; then read the implementation and add its answer as one more line. A tiebreak the code performs by id, insertion order or array position is not a decision anyone made, so it never closes the note. Every note whose outcomes differ on screen becomes a first-round question; existing behaviour supplies one option, not the answer. The note is scaffolding for the interview, not a plan section.
 
 5. **Present informed understanding and assess complexity**:
 
@@ -134,6 +134,7 @@ Before any reading, identify what kinds of upstream artifacts the user passed in
    - [Key discovery — code reference, existing asset, prior work, or domain constraint]
    - [Relevant pattern, convention, or constraint discovered]
    - [Potential complexity or edge case identified]
+   - [Optional: a word in the request I'm reading two ways — the counterexample and what the code does there today — that I'll ask about first]
    ```
 
    Then assess the task complexity and present it to the user for confirmation:
@@ -225,7 +226,7 @@ Before any reading, identify what kinds of upstream artifacts the user passed in
 
    **Universal categories (all domains, all levels):**
    - **Scope boundaries** `[D]`: What's in vs out
-   - **Edge cases / failure modes** `[S]`: What happens when things go wrong or get weird (implementation handling, even if a frame named the observation class)
+   - **Edge cases / failure modes** `[S]`: What happens when things go wrong or get weird (implementation handling, even if a frame named the observation class). Start from the counterexample notes of Step 1.1 item 4: put the concrete data in the question, and when the code already implements one reading, list it as an option labelled `(current behaviour)` — star it only if its outcome is one the user would defend without mentioning the implementation
    - **Success criteria** `[D]`: How do we know this worked — from the end user's or stakeholder's perspective
    - **Priority** `[D]`: Must-have vs nice-to-have — what gets cut if time is tight
 
@@ -688,6 +689,7 @@ Do this in Step 4 (right after the `change.md` → `planned` stamp). The lookup 
 
 1. **Be Skeptical**:
    - Question vague requirements
+   - A ranking or selection word the request uses without defining stays undecided until its counterexample has been put to the user (Step 1.1 item 4)
    - Identify potential issues early
    - Ask "why" and "what about"
    - Don't assume - verify with code, files, or context
@@ -730,6 +732,7 @@ Do this in Step 4 (right after the `change.md` → `planned` stamp). The lookup 
    - Do NOT write the plan with unresolved questions
    - The implementation plan must be complete and actionable
    - Every decision must be made before finalizing the plan
+   - A counterexample the user decided lands in sections that already exist — a named test or success criterion when accepted, "What We're NOT Doing" when declined. No new section for it
    - "Critical Implementation Details" subsections are opt-in: include them only when a real constraint, gotcha, or ordering requirement applies. Default to omission. A plan without that section is not incomplete.
 
 8. **Describe intent, not implementation**:
