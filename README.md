@@ -1,174 +1,106 @@
-# 10x Astro Starter
+# MealMirror
 
-![](./public/template.png)
+A meal and symptom tracker for people with recurring digestive complaints.
 
-A modern, opinionated starter template for building fast, accessible web applications.
+Traditional food journals fail because entries get written from memory, hours after the fact. MealMirror's bet is that **timing is the product**: when you log a meal, the app schedules a symptom check-in 90 minutes later and puts it in your path the next time you open the app — while the symptoms are still fresh. Over a couple of weeks that turns into a dataset you can actually show a doctor or dietitian.
 
-## Tech Stack
+The product deliberately never diagnoses anything. It captures raw co-occurrence between what you ate and how you felt, and leaves the interpretation to a human.
 
-- [Astro](https://astro.build/) v7 - Modern web framework with server-first rendering
-- [React](https://react.dev/) v19 - UI library for interactive components
-- [TypeScript](https://www.typescriptlang.org/) v5 - Type-safe JavaScript
-- [Tailwind CSS](https://tailwindcss.com/) v4 - Utility-first CSS framework
-- [Supabase](https://supabase.com/) - Authentication and backend-as-a-service
-- [Cloudflare Workers](https://workers.cloudflare.com/) - Edge deployment runtime
+## Tech stack
 
-## Prerequisites
+Astro 7 with React 19 islands, TypeScript and Zod end-to-end, Tailwind 4 for styling, Supabase for Postgres and auth, deployed to Cloudflare Workers. Tests run on Vitest against a real local Supabase instance, plus Playwright for the one browser-level scenario that needs a real DOM.
 
-- Node.js v22.14.0 (as specified in `.nvmrc`)
-- npm (comes with Node.js)
+The reasoning behind each of these choices is written up in [`context/foundation/tech-stack.md`](context/foundation/tech-stack.md) and [`context/foundation/infrastructure.md`](context/foundation/infrastructure.md).
 
-## Getting Started
+## Running it locally
 
-1. Clone the repository:
-
-```bash
-git clone https://github.com/przeprogramowani/10x-astro-starter.git
-cd 10x-astro-starter
-```
-
-2. Install dependencies:
+You need Node 22.14.0 (see `.nvmrc`) and Docker with roughly 7 GB of RAM available for the local Supabase stack.
 
 ```bash
 npm install
-```
-
-3. Set up Supabase and configure environment variables — see [Supabase Configuration](#supabase-configuration) below.
-
-4. Create a `.dev.vars` file for local Cloudflare dev secrets:
-
-```bash
-cp .env.example .dev.vars
-```
-
-5. Run the development server:
-
-```bash
+npx supabase start          # boots Postgres, Auth and Studio in Docker
+cp .env.example .env        # paste the SUPABASE_URL and SUPABASE_KEY the CLI printed
+cp .env.example .dev.vars   # same values — Cloudflare's local dev runtime reads this one
 npm run dev
 ```
 
-## Available Scripts
+Migrations in `supabase/migrations/` are applied automatically by `supabase start`. Supabase Studio is at `http://localhost:54323`, and sign-up is open at `/auth/signup`, so you can create your own account on first run.
 
-- `npm run dev` - Start development server (Cloudflare workerd runtime)
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint with type-checked rules
-- `npm run lint:fix` - Auto-fix ESLint issues
-- `npm run format` - Run Prettier
+Local Supabase requires email confirmation by default. Either turn it off in Studio under **Authentication → Email → Confirm email**, or grab the confirmation mail from the built-in inbox at `http://localhost:54324`.
 
-## Project Structure
-
-```md
-.
-├── src/
-│ ├── layouts/ # Astro layouts
-│ ├── pages/ # Astro pages
-│ │ └── api/ # API endpoints
-│ ├── components/ # UI components (Astro & React)
-│ └── assets/ # Static assets
-├── public/ # Public assets
-├── wrangler.jsonc # Cloudflare Workers config
-```
-
-## Supabase Configuration
-
-This project uses [Supabase](https://supabase.com/) for authentication. Environment variables are declared via Astro's `astro:env` schema and are treated as **server-only secrets** — they are never exposed to the client.
-
-### First-time setup (local, no cloud project needed)
-
-Requires [Docker](https://www.docker.com/) and ~7 GB RAM.
-
-1. Create your `.env` file:
+### Tests
 
 ```bash
-cp .env.example .env
+npm test         # Vitest: unit + integration against local Supabase
+npm run test:e2e # Playwright: the collision/defer race scenario
 ```
 
-2. Initialize the local Supabase project (creates a `supabase/` config folder):
+Both commands auto-start Supabase if it isn't already running (`scripts/ensure-supabase-running.mjs`). They need `.env.test` — copy it from `.env.test.example` and fill in the local anon and service-role keys. Every test creates and tears down its own throwaway user, so runs don't pollute each other.
 
-```bash
-npx supabase init
-```
+## How the app works
 
-3. Start the local stack (downloads Docker images on first run):
+### Authentication
 
-```bash
-npx supabase start
-```
+Email and password via Supabase Auth, with sign-in, sign-up and sign-out under `/auth/*`. `src/middleware.ts` guards `/dashboard`, `/api/meals` and `/api/check-ins`, redirecting anonymous requests to the sign-in page.
 
-4. Copy the credentials printed by the CLI into your `.env` and `.dev.vars`:
+Data is scoped to its owner twice over. Every row in `meals` and `check_ins` carries a `user_id`, Postgres row-level security restricts all four operations to `auth.uid() = user_id`, and the service layer additionally filters on `user_id` so a bug in one layer isn't enough to leak data. There's a test that proves it: one authenticated user cannot read, edit or delete another's meal even when handed the exact row ID.
 
-```
-SUPABASE_URL=http://127.0.0.1:54321
-SUPABASE_KEY=<anon key from CLI output>
-```
+### Working with meals
 
-5. To stop the stack when done:
+| Operation | Where | Notes |
+| --- | --- | --- |
+| Create | `POST /api/meals` | Logs the meal and schedules its check-in |
+| Read | `listMeals` on the dashboard | Newest first, each meal tagged with its check-in status |
+| Update | `POST /api/meals/:id` with `intent=update` | Edits time and description |
+| Delete | `POST /api/meals/:id` with `intent=delete` | Cascades the meal's check-ins away with it |
 
-```bash
-npx supabase stop
-```
+Update and delete travel over `POST` with an `intent` field rather than `PATCH` and `DELETE`, because the whole UI is built on plain HTML forms and keeps working with JavaScript disabled.
 
-The local Studio UI is available at `http://localhost:54323`.
+Two behaviours are deliberate rather than accidental. Editing a meal does **not** move its pending check-in: the 90-minute window is anchored to when the meal was logged, so allowing an edit to shift it would be a way to dodge a check-in that's already due. And deleting a meal takes its check-ins with it, because a recorded symptom means nothing once the meal it describes is gone.
 
-No database tables or migrations are required — this project uses Supabase Auth's built-in `auth.users` table only.
+Check-ins are answered, not created or deleted by hand — they only exist as a consequence of a meal, so exposing standalone create and delete for them would let the data drift out of sync with reality.
 
-### Using a cloud Supabase project instead
+### The check-in engine
 
-If you prefer to use a hosted Supabase project, add these variables to your `.env` and `.dev.vars` files:
+This is where the interesting logic lives (`src/lib/services/check-ins.ts` and `meals.ts`).
 
-| Variable       | Description                                                |
-| -------------- | ---------------------------------------------------------- |
-| `SUPABASE_URL` | Project URL from Supabase dashboard → Settings → API       |
-| `SUPABASE_KEY` | `anon` public key from Supabase dashboard → Settings → API |
+Logging a meal schedules a post-meal check-in due 90 minutes later. It shows up in the pending queue once that time passes, and you answer it with a binary tick per symptom: stomach pain, heartburn, bloating, bowel issues, general wellbeing, dry mouth.
 
-```
-SUPABASE_URL=https://<project-ref>.supabase.co
-SUPABASE_KEY=<anon-key>
-```
+The hard part is what happens when you eat again before answering. MealMirror enforces **one active check-in per user**, so a second meal logged inside an open window triggers an explicit choice:
 
-### Email confirmation in local development
+- **Keep** the original check-in at its current time. The second meal gets no check-in of its own.
+- **Defer** it to the new meal. The original is marked superseded and a fresh check-in is scheduled 90 minutes out.
 
-By default Supabase requires email confirmation before a user can sign in. To skip this during local development:
+Deferring runs inside the `defer_check_in` Postgres function so the supersede and the insert land atomically, and a partial unique index enforces the one-active-check-in rule at the database level. If two browser tabs try to defer the same check-in at once, exactly one wins and the other gets a "this was already resolved elsewhere" message instead of silently corrupting the chain.
 
-1. Open the Supabase dashboard for your project
-2. Go to **Authentication → Email → Confirm email**
-3. Toggle it **off**
+## Project documentation
 
-Users can then sign in immediately after sign-up without clicking a confirmation link.
+This project was built through a documented workflow, and the artefacts are part of the repository rather than an afterthought.
 
-### Auth routes
+[`context/foundation/`](context/foundation/) holds the durable picture: [`prd.md`](context/foundation/prd.md) with the vision, personas, functional requirements and the counter-arguments each one survived; [`roadmap.md`](context/foundation/roadmap.md) with the milestone broken into slices tied back to PRD references and GitHub issues; [`test-plan.md`](context/foundation/test-plan.md) with a ranked risk map, the phased rollout that addresses it, and an explicit list of what the project deliberately doesn't test; plus `tech-stack.md` and `infrastructure.md` for the stack and deployment reasoning.
 
-| Route                 | Description                                                             |
-| --------------------- | ----------------------------------------------------------------------- |
-| `/auth/signin`        | Email/password sign-in form                                             |
-| `/auth/signup`        | Email/password sign-up form                                             |
-| `/auth/confirm-email` | Post-signup "check your inbox" page                                     |
-| `/dashboard`          | Example protected page (redirects to `/auth/signin` if unauthenticated) |
+[`context/changes/`](context/changes/) tracks work in flight and [`context/archive/`](context/archive/) keeps the research, plans and reviews from completed slices.
 
-Route protection is handled in `src/middleware.ts`. Add paths to the `PROTECTED_ROUTES` array there to require authentication.
+## Testing approach
+
+The suite is deliberately small and risk-driven — [`test-plan.md`](context/foundation/test-plan.md) §1 sets the rule that each risk is covered once, at the cheapest layer that gives real signal.
+
+Integration tests run against real Postgres rather than mocks, because the risks worth covering here (the collision chain, the single-active-check-in invariant, cross-user isolation) live in the interaction between application code and database constraints — exactly what a mock would paper over. The concurrency tests fire requests through `Promise.all` and assert the invariant holds regardless of how they interleave.
+
+One Playwright spec exists, covering the two-tab defer race, because that's the only risk that genuinely needs a browser: it has to prove the error message is *visible in the DOM*, not merely present in a redirect URL.
 
 ## Deployment
 
-This project deploys to [Cloudflare Workers](https://workers.cloudflare.com/).
-
-1. Build the project:
+Deployed to Cloudflare Workers.
 
 ```bash
 npm run build
-```
-
-2. Deploy with Wrangler:
-
-```bash
+npx wrangler secret put SUPABASE_URL
+npx wrangler secret put SUPABASE_KEY
 npx wrangler deploy
 ```
 
-Set `SUPABASE_URL` and `SUPABASE_KEY` as secrets in your Cloudflare dashboard or via `npx wrangler secret put`.
-
-## CI
-
-GitHub Actions runs lint + build on every push and PR to `master`. Configure `SUPABASE_URL` and `SUPABASE_KEY` as repository secrets in GitHub for the build step.
+GitHub Actions runs lint and build on every push and pull request to `master`; `SUPABASE_URL` and `SUPABASE_KEY` need to be set as repository secrets for the build step. Rollback is `npx wrangler rollback` — note that it reverts Worker code only, never Supabase schema, so a deploy paired with a migration needs its own database rollback plan.
 
 ## License
 
