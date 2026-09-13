@@ -386,18 +386,18 @@ No database schema changes. New local-only artifacts: `.env.test` (gitignored), 
 
 #### Automated
 
-- [x] 5.1 `npm run test:e2e` passes
+- [x] 5.1 `npm run test:e2e` passes — 657a550
 
 #### Manual
 
-- [x] 5.2 Headed run visually confirms the error banner
+- [x] 5.2 Headed run visually confirms the error banner — 657a550
 
 ### Phase 6: Cookbook Update
 
 #### Automated
 
-- [ ] 6.1 `npm run lint`/`npm run format` pass on updated test-plan.md
+- [x] 6.1 `npm run lint`/`npm run format` pass on updated test-plan.md
 
 #### Manual
 
-- [ ] 6.2 §6.1–§6.3 read back and confirmed accurate
+- [x] 6.2 §6.1–§6.3 read back and confirmed accurate
