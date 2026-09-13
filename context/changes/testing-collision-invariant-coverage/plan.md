@@ -361,26 +361,26 @@ No database schema changes. New local-only artifacts: `.env.test` (gitignored), 
 
 #### Automated
 
-- [x] 3.1 One-meal, two-meal keep, two-meal defer, and three-meal defer-chain cases all pass
-- [x] 3.2 `npm run typecheck` and `npm run lint` pass
+- [x] 3.1 One-meal, two-meal keep, two-meal defer, and three-meal defer-chain cases all pass — 5f75677
+- [x] 3.2 `npm run typecheck` and `npm run lint` pass — 5f75677
 
 #### Manual
 
-- [x] 3.3 Spot-check one case's DB rows in Supabase Studio
+- [x] 3.3 Spot-check one case's DB rows in Supabase Studio — 5f75677
 
 ### Phase 4: Risk #2 — Single-Active-Check-In Invariant Coverage
 
 #### Automated
 
-- [ ] 4.1 Concurrent meal-creation race test passes
-- [ ] 4.2 Concurrent defer race test passes
-- [ ] 4.3 Sequential happy-path regression test passes
-- [ ] 4.4 Race tests pass on 3 repeated runs
-- [ ] 4.5 `npm run typecheck` and `npm run lint` pass
+- [x] 4.1 Concurrent meal-creation race test passes
+- [x] 4.2 Concurrent defer race test passes
+- [x] 4.3 Sequential happy-path regression test passes
+- [x] 4.4 Race tests pass on 3 repeated runs
+- [x] 4.5 `npm run typecheck` and `npm run lint` pass
 
 #### Manual
 
-- [ ] 4.6 Spot-check race-test DB state in Supabase Studio
+- [x] 4.6 Spot-check race-test DB state in Supabase Studio
 
 ### Phase 5: E2E Scoped Check
 
