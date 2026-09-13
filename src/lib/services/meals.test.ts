@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/database.types";
-import { createMealWithCheckIn, resolveCollision } from "./meals";
+import { createMealWithCheckIn, deleteMeal, listMeals, resolveCollision, updateMeal } from "./meals";
 import {
   createAdminClient,
   createTestUser,
@@ -22,6 +22,25 @@ async function withTestUser(run: (supabase: SupabaseClient<Database>, userId: st
     await run(supabase, user.id);
   } finally {
     await deleteTestUser(admin, user.id);
+  }
+}
+
+interface SignedInUser {
+  supabase: SupabaseClient<Database>;
+  userId: string;
+}
+
+/** Two isolated signed-in users, for proving one cannot reach the other's data. */
+async function withTwoTestUsers(run: (a: SignedInUser, b: SignedInUser) => Promise<void>): Promise<void> {
+  const userA = await createTestUser(admin);
+  const userB = await createTestUser(admin);
+  try {
+    const supabaseA = await signInTestUser(userA.email, userA.password);
+    const supabaseB = await signInTestUser(userB.email, userB.password);
+    await run({ supabase: supabaseA, userId: userA.id }, { supabase: supabaseB, userId: userB.id });
+  } finally {
+    await deleteTestUser(admin, userA.id);
+    await deleteTestUser(admin, userB.id);
   }
 }
 
@@ -134,6 +153,75 @@ describe("collision/defer chain", () => {
       // current behavior, not as a spec the team has decided is correct.
       expect(checkin1.completed_at).toBeNull();
       expect(checkin2.completed_at).toBeNull();
+    });
+  });
+});
+
+describe("meal read/update/delete", () => {
+  it("lists a user's meals newest-first, each tagged with its check-in status", async () => {
+    await withTestUser(async (supabase, userId) => {
+      const { meal: meal1 } = await logMeal(supabase, userId, "oatmeal");
+      const { meal: meal2, collision } = await logMeal(supabase, userId, "salad");
+      assertDefined(collision, "expected the second meal to collide with the first's pending check-in");
+      await resolveCollision(supabase, userId, { action: "keep", pendingCheckInId: collision.id, mealId: meal2.id });
+
+      const entries = await listMeals(supabase, userId);
+      expect(entries.map((entry) => entry.meal.id)).toEqual([meal2.id, meal1.id]);
+      expect(entries[0].checkInStatus).toBe("none");
+      expect(entries[1].checkInStatus).toBe("pending");
+    });
+  });
+
+  it("updates a meal without moving its pending check-in's due time", async () => {
+    await withTestUser(async (supabase, userId) => {
+      const { meal } = await logMeal(supabase, userId, "oatmeal");
+      const [checkInBefore] = await getCheckIns(supabase, userId);
+
+      const movedBackAnHour = new Date(Date.now() - 60 * 60_000).toISOString();
+      const updated = await updateMeal(supabase, userId, {
+        mealId: meal.id,
+        occurredAt: movedBackAnHour,
+        description: "oatmeal with berries",
+      });
+
+      expect(updated.description).toBe("oatmeal with berries");
+      expect(new Date(updated.occurred_at).toISOString()).toBe(movedBackAnHour);
+
+      const [checkInAfter] = await getCheckIns(supabase, userId);
+      expect(checkInAfter.due_at).toBe(checkInBefore.due_at);
+    });
+  });
+
+  it("deletes a meal and cascades its check-in away with it", async () => {
+    await withTestUser(async (supabase, userId) => {
+      const { meal } = await logMeal(supabase, userId, "oatmeal");
+      expect(await getCheckIns(supabase, userId)).toHaveLength(1);
+
+      await deleteMeal(supabase, userId, meal.id);
+
+      expect(await listMeals(supabase, userId)).toHaveLength(0);
+      expect(await getCheckIns(supabase, userId)).toHaveLength(0);
+    });
+  });
+
+  it("does not let one user update or delete another user's meal (test-plan.md Risk #6)", async () => {
+    await withTwoTestUsers(async (owner, intruder) => {
+      const { meal } = await logMeal(owner.supabase, owner.userId, "oatmeal");
+
+      // The intruder knows the ID and is authenticated — only ownership scoping stands in the way.
+      await expect(deleteMeal(intruder.supabase, intruder.userId, meal.id)).rejects.toThrow();
+      await expect(
+        updateMeal(intruder.supabase, intruder.userId, {
+          mealId: meal.id,
+          occurredAt: new Date().toISOString(),
+          description: "tampered",
+        }),
+      ).rejects.toThrow();
+
+      const entries = await listMeals(owner.supabase, owner.userId);
+      expect(entries).toHaveLength(1);
+      expect(entries[0].meal.description).toBe("oatmeal");
+      expect(await listMeals(intruder.supabase, intruder.userId)).toHaveLength(0);
     });
   });
 });
