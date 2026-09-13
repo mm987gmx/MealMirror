@@ -2,6 +2,9 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/database.types";
 import type { CheckIn } from "@/types";
 
+// Duplicated in the `defer_check_in` Postgres function (supabase/migrations/
+// 20260913161106_defer_check_in_atomic.sql) as `interval '90 minutes'` —
+// keep both in sync if this ever changes.
 const POST_MEAL_CHECK_IN_DUE_MINUTES = 90;
 
 type Client = SupabaseClient<Database>;
