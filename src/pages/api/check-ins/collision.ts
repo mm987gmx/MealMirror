@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { createClient } from "@/lib/supabase";
 import { collisionResolutionSchema } from "@/lib/validation/meal-tracking";
 import { resolveCollision } from "@/lib/services/meals";
-import { isUniqueViolation } from "@/lib/services/postgres-errors";
+import { isDeferConflict } from "@/lib/services/postgres-errors";
 
 export const POST: APIRoute = async (context) => {
   const user = context.locals.user;
@@ -29,7 +29,7 @@ export const POST: APIRoute = async (context) => {
     await resolveCollision(supabase, user.id, parsed.data);
     return context.redirect("/dashboard");
   } catch (err) {
-    const message = isUniqueViolation(err)
+    const message = isDeferConflict(err)
       ? "This check-in was already resolved elsewhere — please refresh and try again."
       : err instanceof Error
         ? err.message

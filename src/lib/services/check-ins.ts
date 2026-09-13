@@ -43,14 +43,13 @@ export async function deferCheckIn(
   activeCheckInId: string,
   mealId: string,
 ): Promise<CheckIn> {
-  const newCheckIn = await scheduleCheckIn(supabase, userId, mealId);
-  const { error } = await supabase
-    .from("check_ins")
-    .update({ superseded_by: newCheckIn.id })
-    .eq("id", activeCheckInId)
-    .eq("user_id", userId);
+  const { data, error } = await supabase.rpc("defer_check_in", {
+    p_user_id: userId,
+    p_active_check_in_id: activeCheckInId,
+    p_meal_id: mealId,
+  });
   if (error) throw error;
-  return newCheckIn;
+  return data;
 }
 
 export async function listDueCheckIns(supabase: Client, userId: string): Promise<CheckIn[]> {

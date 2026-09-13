@@ -244,25 +244,25 @@ Both `meals` and `check_ins` are empty in local dev (verified directly) — no e
 
 #### Automated
 
-- [x] 1.1 Migration applies cleanly
-- [x] 1.2 Regenerated types include `defer_check_in`
-- [x] 1.3 Minimal direct-RPC test passes
-- [x] 1.4 `npm run typecheck` passes
+- [x] 1.1 Migration applies cleanly — 3479eb9
+- [x] 1.2 Regenerated types include `defer_check_in` — 3479eb9
+- [x] 1.3 Minimal direct-RPC test passes — 3479eb9
+- [x] 1.4 `npm run typecheck` passes — 3479eb9
 
 #### Manual
 
-- [x] 1.5 Index covers `(user_id, kind)`, confirmed in Supabase Studio
+- [x] 1.5 Index covers `(user_id, kind)`, confirmed in Supabase Studio — 3479eb9
 
 ### Phase 2: Application Layer — Wire deferCheckIn to the RPC
 
 #### Automated
 
-- [ ] 2.1 Sequential-defer regression test passes
-- [ ] 2.2 Concurrent-defer regression test passes (3x repeated)
-- [ ] 2.3 `npm run typecheck`, `npm run lint`, `npm run build` all pass
-- [ ] 2.4 Sibling change's `meals.test.ts` passes in full
+- [x] 2.1 Sequential-defer regression test passes
+- [x] 2.2 Concurrent-defer regression test passes (3x repeated)
+- [x] 2.3 `npm run typecheck`, `npm run lint`, `npm run build` all pass
+- [x] 2.4 Sibling change's `meals.test.ts` passes in full
 
 #### Manual
 
-- [ ] 2.5 Sequential-defer DB state spot-checked in Supabase Studio
-- [ ] 2.6 Concurrent-defer DB state spot-checked in Supabase Studio
+- [x] 2.5 Sequential-defer DB state spot-checked in Supabase Studio
+- [x] 2.6 Concurrent-defer DB state spot-checked in Supabase Studio
