@@ -1,7 +1,7 @@
 ---
 change_id: fix-defer-checkin-race
 title: Fix deferCheckIn violating the single-active-check-in invariant
-status: implementing
+status: implemented
 created: 2026-09-13
 updated: 2026-09-13
 archived_at: null

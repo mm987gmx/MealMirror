@@ -257,12 +257,12 @@ Both `meals` and `check_ins` are empty in local dev (verified directly) — no e
 
 #### Automated
 
-- [x] 2.1 Sequential-defer regression test passes
-- [x] 2.2 Concurrent-defer regression test passes (3x repeated)
-- [x] 2.3 `npm run typecheck`, `npm run lint`, `npm run build` all pass
-- [x] 2.4 Sibling change's `meals.test.ts` passes in full
+- [x] 2.1 Sequential-defer regression test passes — c719bf1
+- [x] 2.2 Concurrent-defer regression test passes (3x repeated) — c719bf1
+- [x] 2.3 `npm run typecheck`, `npm run lint`, `npm run build` all pass — c719bf1
+- [x] 2.4 Sibling change's `meals.test.ts` passes in full — c719bf1
 
 #### Manual
 
-- [x] 2.5 Sequential-defer DB state spot-checked in Supabase Studio
-- [x] 2.6 Concurrent-defer DB state spot-checked in Supabase Studio
+- [x] 2.5 Sequential-defer DB state spot-checked in Supabase Studio — c719bf1
+- [x] 2.6 Concurrent-defer DB state spot-checked in Supabase Studio — c719bf1
