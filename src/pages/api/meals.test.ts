@@ -38,11 +38,20 @@ describe("POST /api/meals (concurrency)", () => {
       ]);
       const locations = [response1.headers.get("Location") ?? "", response2.headers.get("Location") ?? ""];
 
+      // Exactly one request gets to schedule the check-in. The other loses in
+      // one of two legitimate ways depending on how the two requests
+      // interleave: it either reads the winner's check-in and is sent to the
+      // collision prompt, or it doesn't see it yet and loses the unique-index
+      // race on insert. Both outcomes are correct; pinning the test to one of
+      // them made it flaky.
       const succeeded = locations.filter((loc) => loc === "/dashboard");
-      const failed = locations.filter((loc) => loc.includes("error="));
+      const lost = locations.filter((loc) => loc !== "/dashboard");
       expect(succeeded).toHaveLength(1);
-      expect(failed).toHaveLength(1);
-      expect(decodeURIComponent(failed[0])).toContain(MEAL_RACE_MESSAGE);
+      expect(lost).toHaveLength(1);
+
+      const lostToRace = decodeURIComponent(lost[0]).includes(MEAL_RACE_MESSAGE);
+      const lostToCollision = lost[0].includes("collision=");
+      expect(lostToRace || lostToCollision).toBe(true);
 
       const supabase = await signInTestUser(user.email, user.password);
       const { data: activeCheckIns, error } = await supabase
